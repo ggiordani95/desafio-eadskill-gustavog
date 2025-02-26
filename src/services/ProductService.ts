@@ -3,7 +3,7 @@ import { Product, ProductRequest } from "@/schemas/productSchema";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
-export class ProductAPI {
+export class ProductService {
   static async fetchProducts(): Promise<Product[]> {
     const response = await axios.get(`${API_URL}/products`);
     return response.data;

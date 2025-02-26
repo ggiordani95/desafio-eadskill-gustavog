@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { notificationStyles, NotificationType } from "@/enums/notifications";
 
-export default class NotificationService {
+export class NotificationService {
   static confirmDelete(): boolean {
     return window.confirm("Tem certeza que deseja excluir este produto?");
   }

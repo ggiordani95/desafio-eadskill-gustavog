@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Product, ProductRequest } from "@/schemas/productSchema";
-import { ProductAPI } from "@/services/ProductAPI";
-import { LocalStorageService } from "@/services/LocalStorageService";
-import NotificationService from "@/services/NotificationService";
+import { ProductService } from "@/services/ProductService";
+import { NotificationService } from "@/services/NotificationService";
 import { CategoryService } from "@/services/Category";
 import { NotificationType } from "@/enums/notifications";
 
@@ -10,25 +9,24 @@ export default function useProductsData() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const productsService = new LocalStorageService<Product>("products");
-
   useEffect(() => {
-    const savedProducts = productsService.getValue();
-    if (savedProducts.length > 0) {
-      setProducts(savedProducts);
+    const savedProducts = localStorage.getItem("products");
+
+    if (savedProducts) {
+      setProducts(JSON.parse(savedProducts));
       setLoading(false);
       return;
     }
 
     async function fetchData() {
       try {
-        const fetchedProducts = await ProductAPI.fetchProducts();
+        const fetchedProducts = await ProductService.fetchProducts();
         setProducts(fetchedProducts);
-        productsService.saveItems(fetchedProducts);
+        localStorage.setItem("products", JSON.stringify(fetchedProducts));
       } catch {
         NotificationService.showMessage(
           NotificationType.ERROR,
-          "Erro ao buscar produtos"
+          "Erro ao buscar os produtos"
         );
       } finally {
         setLoading(false);
@@ -36,17 +34,16 @@ export default function useProductsData() {
     }
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const saveProducts = (updatedProducts: Product[]) => {
     setProducts(updatedProducts);
-    productsService.saveItems(updatedProducts);
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
   };
 
   const addProduct = async (product: ProductRequest) => {
     try {
-      const newProduct = await ProductAPI.addProduct(product);
+      const newProduct = await ProductService.addProduct(product);
       saveProducts([...products, { ...newProduct, id: products.length + 1 }]);
       NotificationService.showMessage(
         NotificationType.SUCCESS,
@@ -63,7 +60,7 @@ export default function useProductsData() {
   const deleteProduct = async (id: number) => {
     if (NotificationService.confirmDelete()) {
       try {
-        await ProductAPI.deleteProduct(id);
+        await ProductService.deleteProduct(id);
         saveProducts(products.filter((product) => product.id !== id));
         NotificationService.showMessage(
           NotificationType.INFO,
@@ -80,7 +77,7 @@ export default function useProductsData() {
 
   const updateProduct = async (id: number, updatedProduct: Product) => {
     try {
-      const updated = await ProductAPI.updateProduct(id, updatedProduct);
+      const updated = await ProductService.updateProduct(id, updatedProduct);
       const sanitizedUpdated = {
         ...updated,
         price: Number(updated.price) || 0,

@@ -2,7 +2,7 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, jest } from "@jest/globals";
 import useProductsData from "@/hooks/useProductsData";
 import axios from "axios";
-import NotificationService from "@/services/NotificationService";
+import { NotificationService } from "@/services/NotificationService";
 
 jest.mock("axios");
 

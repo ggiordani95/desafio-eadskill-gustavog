@@ -6,7 +6,6 @@ import ProductFilters from "@/components/ProductFilters";
 import ProductPagination from "@/components/ProductPagination";
 import { useProductContext } from "@/stores/ProductProvider";
 import { useProductModalContext } from "@/stores/ProductModalProvider";
-import { LocalStorageService } from "@/services/LocalStorageService";
 
 export default function ProductActions() {
   const {
@@ -20,16 +19,12 @@ export default function ProductActions() {
   } = useProductContext();
 
   const { openModal } = useProductModalContext();
-
   const [category, setCategory] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const categoryStorage = new LocalStorageService<string>("categoryFilter");
-  const sortOrderStorage = new LocalStorageService<string>("sortOrder");
-
   useEffect(() => {
-    const savedCategory = categoryStorage.getValue()[0];
-    const savedSortOrder = sortOrderStorage.getValue()[0];
+    const savedCategory = localStorage.getItem("categoryFilter");
+    const savedSortOrder = localStorage.getItem("sortOrder");
 
     if (savedCategory) {
       setCategory(savedCategory);
@@ -52,12 +47,12 @@ export default function ProductActions() {
         onCategoryChange={(newCategory) => {
           setCategory(newCategory);
           resetPage();
-          categoryStorage.saveItems([newCategory]);
+          localStorage.setItem("categoryFilter", newCategory);
           filterByCategory(newCategory);
         }}
         onSortChange={(newSortOrder) => {
           setSortOrder(newSortOrder);
-          sortOrderStorage.saveItems([newSortOrder]);
+          localStorage.setItem("sortOrder", newSortOrder);
           sortByPrice(newSortOrder);
         }}
       />

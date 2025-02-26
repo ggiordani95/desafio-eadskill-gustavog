@@ -50,7 +50,6 @@ describe("usePagination", () => {
   it("deve mostrar os itens paginados corretamente", async () => {
     const { result } = renderHook(() => usePagination(mockProducts, 2));
 
-    // Verifica que a primeira página tem 2 produtos
     expect(result.current.paginatedItems).toEqual([
       {
         id: 1,
@@ -70,10 +69,8 @@ describe("usePagination", () => {
       },
     ]);
 
-    // Vai para a próxima página
     act(() => result.current.nextPage());
 
-    // Verifica que a próxima página tem os itens corretos
     await waitFor(() => {
       expect(result.current.paginatedItems).toEqual([
         {
@@ -99,10 +96,8 @@ describe("usePagination", () => {
   it("deve ir para a página anterior", async () => {
     const { result } = renderHook(() => usePagination(mockProducts, 2));
 
-    // Vai para a próxima página
     act(() => result.current.nextPage());
 
-    // Vai para a página anterior
     act(() => result.current.prevPage());
 
     await waitFor(() => {
@@ -130,14 +125,12 @@ describe("usePagination", () => {
   it("deve resetar a página após filtrar produtos", async () => {
     const { result } = renderHook(() => usePagination(mockProducts, 2));
 
-    // Vai para a próxima página
     act(() => result.current.nextPage());
 
-    // Reseta a página
     act(() => result.current.resetPage());
 
     await waitFor(() => {
-      expect(result.current.page).toBe(1); // A página deve ser resetada para a página 1
+      expect(result.current.page).toBe(1);
     });
   });
 });

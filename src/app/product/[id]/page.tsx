@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/schemas/productSchema";
 import { Stars } from "@/components/Stars";
+import { CategoryTranslation } from "@/enums/categories";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -43,7 +44,9 @@ export default function ProductDetails() {
           />
         </div>
         <div className="flex flex-col">
-          <p className="text-gray-500 text-lg mb-3">{product.category}</p>
+          <p className="text-gray-500 text-lg mb-3">
+            {CategoryTranslation[product.category]}
+          </p>
           <h1 className="text-3xl font-bold mb-3">{product.title}</h1>
           {product?.rating?.rate && (
             <div className=" flex flex-row gap-2">
