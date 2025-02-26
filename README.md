@@ -29,24 +29,29 @@ Siga os passos abaixo para rodar o projeto localmente:
 ### 1⃣ Clone o repositório
 
 ```bash
-git clone https://github.com/ggiordani95/desafio-eadskill.git
-cd desafio-eadskill
+git clone https://github.com/ggiordani95/desafio-eadskill-gustavog.git
+cd desafio-eadskill-gustavog
 ```
 
-### 2⃣ Instale as dependências
+### 2⃣ Crie um arquivo chamado .env.local e insira nele
 
 ```bash
+NEXT_PUBLIC_API_URL=https://fakestoreapi.com
+```
 
+### 3⃣ Instale as dependências
+
+```bash
 npm install
 ```
 
-### 3⃣ Inicie o servidor de desenvolvimento
+### 4⃣ Inicie o servidor de desenvolvimento
 
 ```bash
 npm run dev
 ```
 
-### 4⃣ Acesse a aplicação no navegador
+### 5⃣ Acesse a aplicação no navegador
 
 ```bash
 http://localhost:3000/
@@ -76,5 +81,5 @@ npm test
 
 ---
 
+Feito por [@ggiordani95](https://github.com/ggiordani95) 🚀
 
-Feito com por [@ggiordani95](https://github.com/ggiordani95) 🚀
