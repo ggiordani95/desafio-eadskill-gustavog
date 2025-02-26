@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Product } from "@/schemas/productSchema";
 import { Stars } from "@/components/Stars";
 
-export default function ProdutoDetalhes() {
+export default function ProductDetails() {
   const { id } = useParams();
   const router = useRouter();
   const { getProductById } = useProducts();
@@ -25,8 +25,6 @@ export default function ProdutoDetalhes() {
     return (
       <div className="text-center mt-10 text-lg">Produto não encontrado...</div>
     );
-
-  console.log(product);
 
   return (
     <div className="container mx-auto p-4 bg-gray-100 w-screen  mb-10">
@@ -47,15 +45,16 @@ export default function ProdutoDetalhes() {
         <div className="flex flex-col">
           <p className="text-gray-500 text-lg mb-3">{product.category}</p>
           <h1 className="text-3xl font-bold mb-3">{product.title}</h1>
-          <div className=" flex flex-row gap-2">
-            <p className="text-xl font-bold text-gray-700">
-              {product.rating.rate}
-            </p>
-            <Stars rating={product.rating.rate} />
-          </div>
-
+          {product?.rating?.rate && (
+            <div className=" flex flex-row gap-2">
+              <p className="text-xl font-bold text-gray-700">
+                {product.rating.rate}
+              </p>
+              <Stars rating={product.rating.rate} />
+            </div>
+          )}
           <p className="text-4xl my-2 font-semibold text-zinc-700 mt-4">
-            R$ {product.price.toFixed(2)}
+            R$ {Number(product.price.toFixed(2))}
           </p>
           <p className="mt-4 text-gray-700">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent

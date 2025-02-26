@@ -15,7 +15,7 @@ export const useProductFormSubmitHandler = (
 ) => {
   const submitHandler = async () => {
     try {
-      await props.onSubmit(props.data);
+      props.onSubmit(props.data);
       props.reset();
       props.onClose();
     } catch (error) {

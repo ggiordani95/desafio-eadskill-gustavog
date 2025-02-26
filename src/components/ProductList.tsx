@@ -9,20 +9,11 @@ type ProductListProps = {
   onDelete: (id: number) => void;
 };
 
-export default function ProductList({
-  products,
-  onEdit,
-  onDelete,
-}: ProductListProps) {
+export default function ProductList({ products, onDelete }: ProductListProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {products.map((product) => (
-        <CardItem
-          key={product.id}
-          product={product}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <CardItem key={product.id} product={product} onDelete={onDelete} />
       ))}
     </div>
   );

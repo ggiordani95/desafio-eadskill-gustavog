@@ -1,21 +1,32 @@
 "use client";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import ProductList from "@/components/ProductList";
 import ProductModal from "@/components/ProductModal";
 import LoadingPage from "@/components/Loading";
-import { ProductProvider, useProductContext } from "@/stores/ProductProvider";
+import ProductProvider, { useProductContext } from "@/stores/ProductProvider";
+import {
+  ProductModalProvider,
+  useProductModalContext,
+} from "@/stores/ProductModalProvider";
 import ProductActions from "@/components/ProductActions";
 
 export default function Home() {
   return (
-    <ProductProvider>
-      <HomeContent />
-    </ProductProvider>
+    <>
+      <ToastContainer />
+      <ProductProvider>
+        <ProductModalProvider>
+          <HomeContent />
+        </ProductModalProvider>
+      </ProductProvider>
+    </>
   );
 }
 
 function HomeContent() {
   const { products, loading, deleteProduct } = useProductContext();
+  const { openModal } = useProductModalContext();
 
   if (loading) return <LoadingPage />;
 
@@ -25,7 +36,7 @@ function HomeContent() {
       <ProductActions />
       <ProductList
         products={products}
-        onEdit={() => {}}
+        onEdit={openModal}
         onDelete={deleteProduct}
       />
       <ProductModal />

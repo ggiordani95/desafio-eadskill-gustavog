@@ -12,15 +12,14 @@ export default function useProducts() {
     deleteProduct,
     updateProduct,
     getProductById,
+    getCategories,
   } = useProductsData();
 
   const { filteredProducts, filterByCategory, sortByPrice } =
     useProductsFilters(products);
 
-  const { page, nextPage, prevPage, paginatedItems } = usePagination(
-    filteredProducts,
-    6
-  );
+  const { page, nextPage, prevPage, paginatedItems, lastPage, resetPage } =
+    usePagination(filteredProducts, 6);
 
   return {
     products: paginatedItems,
@@ -29,10 +28,13 @@ export default function useProducts() {
     deleteProduct,
     updateProduct,
     filterByCategory,
+    getCategories,
     sortByPrice,
     page,
     nextPage,
+    lastPage,
     prevPage,
     getProductById,
+    resetPage,
   };
 }

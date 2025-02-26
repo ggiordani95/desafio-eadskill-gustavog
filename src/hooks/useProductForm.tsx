@@ -11,10 +11,9 @@ import {
 export type useFormProductsType = UseImageValidationProps &
   UseProductFormSubmitHandlerProps;
 
-export const useFormProducts = ({ ...props }: useFormProductsType) => {
+export const useProductForm = ({ ...props }: useFormProductsType) => {
   const { imageError, isValidImage } = useImageValidation({
     imageUrl: props.imageUrl,
-    setError: props.setError,
     clearErrors: props.clearErrors,
   });
 

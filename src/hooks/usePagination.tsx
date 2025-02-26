@@ -1,13 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 export default function usePagination<T>(items: T[], perPage: number) {
   const [page, setPage] = useState(1);
 
-  const paginatedItems = items.slice((page - 1) * perPage, page * perPage);
+  const lastPage = useMemo(
+    () => Math.ceil(items.length / perPage),
+    [items, perPage]
+  );
+
+  const paginatedItems = useMemo(
+    () => items.slice((page - 1) * perPage, page * perPage),
+    [items, page, perPage]
+  );
 
   const nextPage = () => {
-    if (page < Math.ceil(items.length / perPage)) {
+    if (page < lastPage) {
       setPage((prevPage) => prevPage + 1);
     }
   };
@@ -18,5 +26,9 @@ export default function usePagination<T>(items: T[], perPage: number) {
     }
   };
 
-  return { page, nextPage, prevPage, paginatedItems };
+  const resetPage = () => {
+    setPage(1);
+  };
+
+  return { page, lastPage, nextPage, prevPage, paginatedItems, resetPage };
 }

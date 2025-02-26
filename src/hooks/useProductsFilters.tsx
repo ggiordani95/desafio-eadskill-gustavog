@@ -35,7 +35,11 @@ export default function useProductsFilters(products: Product[]) {
     } else if (order === "desc") {
       updatedProducts.sort((a, b) => b.price - a.price);
     } else {
-      updatedProducts.sort((a, b) => b.rating.rate - a.rating.rate);
+      updatedProducts.sort((a, b) => {
+        const rateA = a.rating?.rate ?? 0;
+        const rateB = b.rating?.rate ?? 0;
+        return rateB - rateA;
+      });
     }
 
     setFilteredProducts(updatedProducts);

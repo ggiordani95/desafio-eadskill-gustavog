@@ -1,16 +1,14 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { UseFormSetError, UseFormClearErrors } from "react-hook-form";
+import { UseFormClearErrors } from "react-hook-form";
 
 export type UseImageValidationProps = {
   imageUrl: string;
-  setError: UseFormSetError<{ image: string }>;
   clearErrors: UseFormClearErrors<{ image: string }>;
 };
 
 export const useImageValidation = ({
   imageUrl,
-  setError,
   clearErrors,
 }: UseImageValidationProps) => {
   const [imageError, setImageError] = useState<string | null>(null);
@@ -20,8 +18,6 @@ export const useImageValidation = ({
     async (url: string) => {
       if (!url || url.length < 5) {
         setIsValidImage(false);
-        setImageError("URL inválida");
-        setError("image", { type: "manual", message: "URL inválida" });
         return;
       }
       try {
@@ -30,7 +26,6 @@ export const useImageValidation = ({
           throw new Error("A URL deve começar com http:// ou https://");
         }
       } catch {
-        setImageError("URL inválida");
         setIsValidImage(false);
         return;
       }
@@ -44,7 +39,7 @@ export const useImageValidation = ({
         setIsValidImage(false);
       }
     },
-    [setError, clearErrors]
+    [clearErrors]
   );
 
   useEffect(() => {

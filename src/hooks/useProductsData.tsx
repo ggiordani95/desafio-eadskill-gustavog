@@ -1,81 +1,105 @@
-"use client";
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { Product } from "@/schemas/productSchema";
+import { Product, ProductRequest } from "@/schemas/productSchema";
+import { ProductAPI } from "@/services/ProductAPI";
+import { LocalStorageService } from "@/services/LocalStorageService";
+import NotificationService from "@/services/NotificationService";
+import { CategoryService } from "@/services/Category";
+import { NotificationType } from "@/enums/notifications";
 
 export default function useProductsData() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const savedProducts = localStorage.getItem("products");
+  const productsService = new LocalStorageService<Product>("products");
 
-    if (savedProducts) {
-      setProducts(JSON.parse(savedProducts));
+  useEffect(() => {
+    const savedProducts = productsService.getValue();
+    if (savedProducts.length > 0) {
+      setProducts(savedProducts);
       setLoading(false);
       return;
     }
 
-    async function fetchProducts() {
+    async function fetchData() {
       try {
-        const response = await axios.get("https://fakestoreapi.com/products");
-        setProducts(response.data);
-        localStorage.setItem("products", JSON.stringify(response.data));
-      } catch (error) {
-        console.error("Erro ao buscar produtos", error);
+        const fetchedProducts = await ProductAPI.fetchProducts();
+        setProducts(fetchedProducts);
+        productsService.saveItems(fetchedProducts);
+      } catch {
+        NotificationService.showMessage(
+          NotificationType.ERROR,
+          "Erro ao buscar produtos"
+        );
       } finally {
         setLoading(false);
       }
     }
-    fetchProducts();
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const saveProducts = (updatedProducts: Product[]) => {
     setProducts(updatedProducts);
-    localStorage.setItem("products", JSON.stringify(updatedProducts));
+    productsService.saveItems(updatedProducts);
   };
 
-  const addProduct = async (product: Product) => {
+  const addProduct = async (product: ProductRequest) => {
     try {
-      const response = await axios.post(
-        "https://fakestoreapi.com/products",
-        product
+      const newProduct = await ProductAPI.addProduct(product);
+      saveProducts([...products, { ...newProduct, id: products.length + 1 }]);
+      NotificationService.showMessage(
+        NotificationType.SUCCESS,
+        "Produto adicionado com sucesso"
       );
-      saveProducts([...products, response.data]);
-    } catch (error) {
-      console.error("Erro ao adicionar produto", error);
+    } catch {
+      NotificationService.showMessage(
+        NotificationType.ERROR,
+        "Erro ao adicionar o produto"
+      );
     }
   };
 
   const deleteProduct = async (id: number) => {
-    if (window.confirm("Tem certeza que deseja excluir este produto?")) {
+    if (NotificationService.confirmDelete()) {
       try {
-        await axios.delete(`https://fakestoreapi.com/products/${id}`);
+        await ProductAPI.deleteProduct(id);
         saveProducts(products.filter((product) => product.id !== id));
-      } catch (error) {
-        console.error("Erro ao excluir produto", error);
+        NotificationService.showMessage(
+          NotificationType.INFO,
+          "Produto removido com sucesso"
+        );
+      } catch {
+        NotificationService.showMessage(
+          NotificationType.ERROR,
+          "Erro ao excluir o produto"
+        );
       }
     }
   };
 
   const updateProduct = async (id: number, updatedProduct: Product) => {
     try {
-      await axios.put(
-        `https://fakestoreapi.com/products/${id}`,
-        updatedProduct
-      );
+      const updated = await ProductAPI.updateProduct(id, updatedProduct);
+      const sanitizedUpdated = {
+        ...updated,
+        price: Number(updated.price) || 0,
+      };
       saveProducts(
         products.map((product) =>
-          product.id === id ? { ...product, ...updatedProduct } : product
+          product.id === id ? { ...product, ...sanitizedUpdated } : product
         )
       );
-    } catch (error) {
-      console.error("Erro ao atualizar produto", error);
+      NotificationService.showMessage(
+        NotificationType.SUCCESS,
+        "Produto alterado com sucesso"
+      );
+    } catch {
+      NotificationService.showMessage(
+        NotificationType.ERROR,
+        "Erro ao editar produto"
+      );
     }
-  };
-
-  const getProductById = (id: number) => {
-    return products.find((product) => product.id === id) || null;
   };
 
   return {
@@ -84,6 +108,8 @@ export default function useProductsData() {
     addProduct,
     deleteProduct,
     updateProduct,
-    getProductById,
+    getProductById: (id: number) =>
+      products.find((product) => product.id === id) || null,
+    getCategories: () => CategoryService.getCategories(products),
   };
 }

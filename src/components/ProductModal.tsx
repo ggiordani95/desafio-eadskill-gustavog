@@ -1,6 +1,5 @@
 "use client";
 
-import useProductModal from "@/hooks/useProductModal";
 import { ProductForm } from "@/components/ProductForm";
 import {
   Dialog,
@@ -8,11 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import useProducts from "@/hooks/useProducts";
+import { useProductModalContext } from "@/stores/ProductModalProvider";
+import { useProductContext } from "@/stores/ProductProvider";
 
 export default function ProductModal() {
-  const { showModal, editingProduct, closeModal } = useProductModal();
-  const { addProduct, updateProduct } = useProducts();
+  const { showModal, editingProduct, closeModal } = useProductModalContext();
+  const { addProduct, updateProduct } = useProductContext();
 
   return (
     <Dialog open={showModal} onOpenChange={closeModal}>
@@ -25,11 +25,11 @@ export default function ProductModal() {
         <ProductForm
           isEditing={!!editingProduct}
           defaultValues={editingProduct || undefined}
-          onSubmit={(data) => {
-            if (editingProduct) {
-              updateProduct(editingProduct.id, data);
+          onSubmit={async (data) => {
+            if (editingProduct && editingProduct.id) {
+              await updateProduct(editingProduct.id, data);
             } else {
-              addProduct(data);
+              await addProduct(data);
             }
             closeModal();
           }}

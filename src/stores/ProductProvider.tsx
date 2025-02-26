@@ -7,7 +7,11 @@ const ProductContext = createContext<
   ReturnType<typeof useProducts> | undefined
 >(undefined);
 
-export function ProductProvider({ children }: { children: React.ReactNode }) {
+export default function ProductProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const productState = useProducts();
 
   return (

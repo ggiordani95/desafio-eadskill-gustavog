@@ -7,6 +7,7 @@ import {
   SelectContent,
   SelectValue,
 } from "@/components/ui/select";
+import { useProductContext } from "@/stores/ProductProvider";
 
 type ProductFiltersProps = {
   category: string;
@@ -21,17 +22,21 @@ export default function ProductFilters({
   onCategoryChange,
   onSortChange,
 }: ProductFiltersProps) {
+  const { getCategories } = useProductContext();
+  const categories = getCategories();
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex gap-3 items-center">
       <Select value={category} onValueChange={onCategoryChange}>
         <SelectTrigger className="w-48">
           <SelectValue placeholder="Filtrar por categoria" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todas</SelectItem>
-          <SelectItem value="tecnologia">Tecnologia</SelectItem>
-          <SelectItem value="moda">Moda</SelectItem>
-          <SelectItem value="alimentos">Alimentos</SelectItem>
+          {categories.map((category) => (
+            <SelectItem key={category.original} value={category.original}>
+              {category.ptbr}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 
@@ -43,6 +48,7 @@ export default function ProductFilters({
           <SelectValue placeholder="Ordenar por preço" />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value="default">Melhor avaliação</SelectItem>
           <SelectItem value="asc">Menor preço</SelectItem>
           <SelectItem value="desc">Maior preço</SelectItem>
         </SelectContent>

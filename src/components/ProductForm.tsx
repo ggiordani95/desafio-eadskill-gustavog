@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { productSchema } from "@/schemas/productSchema";
 import Image from "next/image";
-import { useFormProducts } from "@/hooks/useProductForm";
+import { useProductForm } from "@/hooks/useProductForm";
+import useProductsData from "@/hooks/useProductsData";
+import { Category } from "@/enums/categories";
 
 export type ProductFormProps = {
   onSubmit: (data: z.infer<typeof productSchema>) => void;
@@ -22,26 +24,36 @@ export const ProductForm = ({
   isEditing = false,
   defaultValues,
 }: ProductFormProps) => {
-  // Form
   const {
     register,
     handleSubmit,
     reset,
     watch,
-    setError,
+    setValue,
     clearErrors,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(productSchema),
-    defaultValues,
+    defaultValues: {
+      id: isEditing ? defaultValues?.id : undefined,
+      title: defaultValues?.title || "",
+      price: defaultValues?.price || 0.99,
+      category: defaultValues?.category || Category.MENS_CLOTHING,
+      image:
+        defaultValues?.image ||
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStnPtdCrmYySpCRIGCzmncnU7cugyZF4T-Vg&s",
+      rating: defaultValues?.rating || undefined,
+      description: defaultValues?.description || "Sem descrição",
+    },
   });
 
-  // Imagem
+  const { getCategories } = useProductsData();
+  const categories = getCategories();
+
   const imageUrl = watch("image", defaultValues?.image || "").trim();
 
-  const { imageError, isValidImage, submitHandler } = useFormProducts({
+  const { imageError, isValidImage, submitHandler } = useProductForm({
     imageUrl,
-    setError,
     clearErrors,
     onSubmit,
     onClose,
@@ -51,7 +63,10 @@ export const ProductForm = ({
 
   useEffect(() => {
     if (defaultValues) {
-      reset(defaultValues);
+      reset({
+        ...defaultValues,
+        price: Number(defaultValues.price),
+      });
     }
   }, [defaultValues, reset]);
 
@@ -75,8 +90,10 @@ export const ProductForm = ({
           Preço (R$)
         </label>
         <Input
-          {...register("price", { valueAsNumber: true })}
+          {...register("price")}
           placeholder="Digite o preço"
+          min={0}
+          value={watch("price") ?? 0.99}
           type="number"
           className="border p-2 w-full"
           step="0.01"
@@ -89,12 +106,18 @@ export const ProductForm = ({
         <label className="block text-sm font-semibold text-gray-700">
           Categoria
         </label>
-        <Input
+        <select
           {...register("category")}
-          placeholder="Digite a categoria"
-          className="border p-2 w-full"
+          className="border p-2 w-full rounded"
+          onChange={(e) => setValue("category", e.target.value)}
           disabled={isEditing}
-        />
+        >
+          {categories.map((category) => (
+            <option key={category.original} value={category.original}>
+              {category.ptbr}
+            </option>
+          ))}
+        </select>
         {errors.category && (
           <p className="text-red-500 text-sm">{errors.category.message}</p>
         )}
@@ -114,14 +137,16 @@ export const ProductForm = ({
       </div>
       {isValidImage && imageUrl.startsWith("http") && (
         <div className="flex flex-col items-center mt-2">
-          <p className="text-sm text-gray-600">Pré-visualização da imagem:</p>
+          <p className="text-sm text-gray-600">
+            Pré-visualização da imagem (insira a url acima):
+          </p>
           <a href={imageUrl} target="_blank" rel="noopener noreferrer">
             <Image
               src={imageUrl}
               alt="Pré-visualização"
               width={200}
               height={200}
-              className="mt-2 border rounded-lg shadow-md object-contain"
+              className="mt-2 border rounded-lg shadow-md object-contain cursor-not-allowed"
             />
           </a>
         </div>
@@ -130,7 +155,7 @@ export const ProductForm = ({
       <div className="flex gap-4 mt-4">
         <Button
           type="submit"
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded w-full"
+          className="bg-black  text-white px-4 py-2 rounded w-full"
         >
           {isEditing ? "Atualizar Produto" : "Salvar Produto"}
         </Button>
