@@ -2,6 +2,8 @@
 
 Uma aplicação para manipulação de produtos, incluindo funcionalidades de **filtro**, **ordenação** e **paginação**.
 
+![Screenshot_4](https://github.com/user-attachments/assets/b7934a46-f3e9-4d42-a3fc-1228f844d4a1)
+
 ## 🛠 Tecnologias Utilizadas
 
 - ⚪ **React** (com hooks)
