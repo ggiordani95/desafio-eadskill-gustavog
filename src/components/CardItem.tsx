@@ -65,10 +65,7 @@ export const CardItem = ({ product, onDelete }: CardItemProps) => {
         </CardTitle>
         <div className="flex justify-between items-center mt-2">
           <p className="text-zinc-700 font-bold text-lg">
-            R$
-            {typeof product.price === "number"
-              ? product.price.toFixed(2)
-              : "0.00"}
+            R$ {Number(product?.price ?? 0).toFixed(2)}
           </p>
           {product?.rating?.rate && (
             <div className="flex items-center">

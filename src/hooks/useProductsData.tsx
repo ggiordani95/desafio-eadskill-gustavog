@@ -44,7 +44,14 @@ export default function useProductsData() {
   const addProduct = async (product: ProductRequest) => {
     try {
       const newProduct = await ProductService.addProduct(product);
-      saveProducts([...products, { ...newProduct, id: products.length + 1 }]);
+      saveProducts([
+        ...products,
+        {
+          ...newProduct,
+          id: products.length + 1,
+          price: Number(newProduct.price),
+        },
+      ]);
       NotificationService.showMessage(
         NotificationType.SUCCESS,
         "Produto adicionado com sucesso"
