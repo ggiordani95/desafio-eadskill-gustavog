@@ -3,7 +3,7 @@ import { describe, it, expect } from "@jest/globals";
 import usePagination from "@/hooks/usePagination";
 import { Product } from "@/schemas/productSchema";
 
-describe("usePagination", () => {
+describe("Paginação", () => {
   const mockProducts: Product[] = [
     {
       id: 1,

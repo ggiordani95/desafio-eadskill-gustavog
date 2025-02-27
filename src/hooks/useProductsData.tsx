@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Product, ProductRequest } from "@/schemas/productSchema";
 import { ProductService } from "@/services/ProductService";
 import { NotificationService } from "@/services/NotificationService";
-import { CategoryService } from "@/services/Category";
+import { CategoryService } from "@/services/CategoryService";
 import { NotificationType } from "@/enums/notifications";
 
 export default function useProductsData() {

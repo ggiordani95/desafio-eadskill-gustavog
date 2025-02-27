@@ -52,6 +52,7 @@ export default function ProductActions() {
         }}
         onSortChange={(newSortOrder) => {
           setSortOrder(newSortOrder);
+          resetPage();
           localStorage.setItem("sortOrder", newSortOrder);
           sortByPrice(newSortOrder);
         }}
