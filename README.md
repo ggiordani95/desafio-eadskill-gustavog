@@ -6,7 +6,7 @@ Uma aplicação para manipulação de produtos, incluindo funcionalidades de **f
 
 ## 🛠 Tecnologias Utilizadas
 
-- ⚪ **React** (com hooks)
+- ⚪ **Next** (React)
 - 🔵 **TypeScript**
 - 🧪 **Jest** (para testes)
 - 🤩 **React Testing Library**
